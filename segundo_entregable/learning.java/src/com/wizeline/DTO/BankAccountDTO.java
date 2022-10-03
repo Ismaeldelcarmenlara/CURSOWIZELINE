@@ -9,10 +9,12 @@ import com.wizeline.enums.AccountType;
 
 
 public class BankAccountDTO {
+	
+	
+	
 	Map<String, List<BankAccountDTO>> groupedAccounts;
 	Function<BankAccountDTO, String> groupFunction = (account) -> account.getAccountType().toString();
-	
-	private Double accountNumber;
+
 	
 	
     public Double getAccountNumber() {
@@ -57,6 +59,8 @@ public class BankAccountDTO {
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
+	
+	private Double accountNumber;
 	private String accountName;
     private String user;
     private double accountBalance;
@@ -64,6 +68,9 @@ public class BankAccountDTO {
     private boolean accountActive;
     private AccountType accountType;
     private LocalDateTime creationDate;
+  
+    private LocalDateTime lastUsage;
+    
     public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
@@ -76,5 +83,5 @@ public class BankAccountDTO {
 	public void setLastUsage(LocalDateTime lastUsage) {
 		this.lastUsage = lastUsage;
 	}
-	private LocalDateTime lastUsage;
+	
 }

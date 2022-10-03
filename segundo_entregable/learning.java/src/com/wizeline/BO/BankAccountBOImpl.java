@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import com.wizeline.enums.AccountType;
 import com.wizeline.DTO.BankAccountDTO;
-//import com.wizeline.enum.Enum.AccounType;
 
+import com.wizeline.enums.*;
 public class BankAccountBOImpl implements BankAccountBO {
-	
+	//anotacion
 	@Override
     public List<BankAccountDTO> getAccounts() {
         // Definicion de lista con la informacion de las cuentas existentes.
@@ -22,7 +22,7 @@ public class BankAccountBOImpl implements BankAccountBO {
         accountDTOList.add(buildBankAccount("user2@wizeline.com" ,false, Country.US, LocalDateTime.now().minusYears(4)));
         return accountDTOList;
     } 
-	
+	//anotacion
 	  @Override
 	    public BankAccountDTO getAccountDetails(String user, String lastUsage) {
 	        DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");

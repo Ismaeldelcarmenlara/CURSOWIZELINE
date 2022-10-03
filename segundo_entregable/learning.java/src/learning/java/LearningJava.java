@@ -12,9 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+
 import com.sun.net.httpserver.HttpServer;
 
 import com.wizeline.BO.BankAccountBO;
@@ -27,35 +28,49 @@ import com.wizeline.DTO.ResponseDTO;
 import com.wizeline.DTO.UserDTO;
 import com.wizeline.Exceptions.ExceptionGenerica;
 import com.wizeline.utils.Utils;
-
-
+import com.wizeline.enums.*;
+//arreglos
 import java.util.ArrayList;
 import java.util.Arrays;
+//lista
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.function.Function;
-
-
+ 
+import com.wizeline.DTO.ResponseDTO;
 
 public class LearningJava extends Thread {
 
 	private static final Logger LOGGER = Logger.getLogger(LearningJava.class.getName());
 	private static final Object SUCCESS_CODE = "OK000";
+	
+	//Implementación de concurrencia
 	private static String responseTextThread="";
 	private ResponseDTO response;
 	private static String textThread;
 	
-	
+
 	public static void main(String[] args) throws IOException {
+		
+		
+		Logger logger=Logger.getInstance();
+		logger.log("patron de diseño singleton");
+		
+		
+		
+		
 		LOGGER.info("LearningJava - Iniciando servicio REST");
 HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
 		
 		server.createContext("/api/login", (exchange -> {
+			
 			LOGGER.info("LearningJava - Inicia procesamiento de peticion ...");
 			ResponseDTO response = new ResponseDTO();
 			String responseText = "";
-
-			if ("GET".equals(exchange.getRequestMethod())) {
+if(exchange==null);{
+LOGGER.info("no se recibio ningun dato");
+}			
+if ("GET".equals(exchange.getRequestMethod())) {
 				LOGGER.info("LearningJava - Procesando peticion HTTP de tipo GET");
 				UserDTO user = new UserDTO();
 				user = user.getParameters(splitQuery(exchange.getRequestURI()));
@@ -78,12 +93,14 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
 		}));
 		server.createContext("/api/createUser", (exchange -> {
 			LOGGER.info("LearningJava - Inicia procesamiento de peticion ...");
+			
 			ResponseDTO response = new ResponseDTO();
 			String responseText = "";
 			exchange.getRequestBody();
 			if ("POST".equals(exchange.getRequestMethod())) {
 				LOGGER.info("LearningJava - Procesando peticion HTTP de tipo POST");
 				UserDTO user = new UserDTO();
+				
 				user = user.getParameters(splitQuery(exchange.getRequestURI()));
 				response = createUser(user.getUser(), user.getPassword());
 				JSONObject json = new JSONObject(response);
@@ -147,6 +164,9 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
 			    
 			    
 			    
+			   }else {
+				   exchange.sendResponseHeaders(405,-1);
+				   
 			   }
 			    /**
 			     * Always remember to close the resource you open. Avoid memory leaks
@@ -156,8 +176,13 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
 			   OutputStream output = exchange.getResponseBody();
 			 Instant finalDeEjecucion=Instant.now();
 			 //String total=new String(String.valueOf(Duration.between(iniciDeEjecucion, finalDeEjecucion).toMillis()).concat("segundos"));  
+			
+			 
+			 
 			 LOGGER.info("LearningJava - Cerrando recursos");
-			   output.write(responseText.getBytes());
+			 String total=new String(String.valueOf(Duration.between(iniciDeEjecucion, finalDeEjecucion).toMillis()).concat("segundos"));  
+			 LOGGER.info("tiempo de respuesta:".concat(total));
+			 output.write(responseText.getBytes());
 			   output.flush();
 			   output.close();
 			   exchange.close();
@@ -203,43 +228,6 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
         output.close();
         exchange.close();
 	}));	
-
-
-
-
-
-	/* Consultar información de todas las cuentas*/
-		server.createContext("/api/getAccounts", (exchange -> {
-			LOGGER.info(msgProcPeticion);
-			Instant inicioDeEjecucion = Instant.now();
-			BankAccountService bankAccountBO = new BankAccountServiceImpl();
-			String responseText = "";
-			/** Validates the type of http request  */
-			if ("GET".equals(exchange.getRequestMethod())) {
-				LOGGER.info("LearningJava - Procesando peticion HTTP de tipo GET");
-				List<BankAccountDTO> accounts = bankAccountBO.getAccounts();
-				JSONArray json = new JSONArray(accounts);
-				responseText = json.toString();
-				exchange.getResponseHeaders().add("Content-type", "application/json");
-				exchange.sendResponseHeaders(200, responseText.getBytes().length);
-			} else {
-				/** 405 Method Not Allowed */
-				exchange.sendResponseHeaders(405, -1);
-			}
-			OutputStream output = exchange.getResponseBody();
-			Instant finalDeEjecucion = Instant.now();
-			/**
-			 * Always remember to close the resources you open.
-			 * Avoid memory leaks
-			 */
-			LOGGER.info("LearningJava - Cerrando recursos ...");
-			String total = new String(String.valueOf(Duration.between(inicioDeEjecucion, finalDeEjecucion).toMillis()).concat(" segundos."));
-			LOGGER.info("Tiempo de respuesta: ".concat(total));
-			output.write(responseText.getBytes());
-			output.flush();
-			output.close();
-			exchange.close();
-		}));
 		
 	server.createContext("/api/getAccountsGroupByType", (exchange -> {
        String msgProcPeticion="LearningJava - Procesando peticion HTTP de tipo GET";
@@ -255,7 +243,9 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
             
             // Aqui implementaremos la programación funcional
             Map<String, List<BankAccountDTO>> groupedAccounts;
+           //primer colector
             Function<BankAccountDTO, String> groupFunction = (account) -> account.getAccountType().toString();
+          //segundo colector
             groupedAccounts = accounts.stream().collect(Collectors.groupingBy(groupFunction));
 
             JSONObject json = new JSONObject(groupedAccounts);
@@ -285,8 +275,8 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
 		LOGGER.info("LearningJava - Server started on port 8081");
 	
 	}
-
-	
+//concurrencia con tres hilos
+	//anotacion
 	@Override
 	public void run(){	
 	   
@@ -321,7 +311,7 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
 	}
 	
 	
-	
+	//anotacion
 	@Deprecated(since = "Anotaciones update")
 	 private void createUsers() {
 	     try {
@@ -357,7 +347,7 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
 	}
 
 	
-	
+	@SuppressWarnings("unused")
 	private static ResponseDTO login(String User, String password) {
 		UserBO userBo = new UserBOImpl();
 		return userBo.login(User, password);

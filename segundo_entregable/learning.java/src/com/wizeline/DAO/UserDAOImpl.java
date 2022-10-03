@@ -73,6 +73,9 @@ private void writeFile(String user, String password) {
 
 private String readFile(String user, String password) {
 	String result = "fail";
+	System.out.println("read file..");
+	System.out.println("user->"+user);
+	System.out.println("password"+password);
 	try {
         File file = new File("file.txt");
         BufferedReader br = new BufferedReader(new FileReader(file));

@@ -24,4 +24,21 @@ user.setUser(userParam.get("user"));
 user.setPassword(userParam.get("password"));
 return user;
 }
+
+
+//clase interna
+public void claseinterna(){
+if(user==null) {
+System.out.println("no se recibio dato de usuario");
+}else
+{
+System.out.println("procesando datos de usuario");	
+	
+}
+	
+}	
+	
+}
+
+
 }
