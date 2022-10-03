@@ -203,6 +203,43 @@ HttpServer server=HttpServer.create(new InetSocketAddress(8081),0);
         output.close();
         exchange.close();
 	}));	
+
+
+
+
+
+	/* Consultar información de todas las cuentas*/
+		server.createContext("/api/getAccounts", (exchange -> {
+			LOGGER.info(msgProcPeticion);
+			Instant inicioDeEjecucion = Instant.now();
+			BankAccountService bankAccountBO = new BankAccountServiceImpl();
+			String responseText = "";
+			/** Validates the type of http request  */
+			if ("GET".equals(exchange.getRequestMethod())) {
+				LOGGER.info("LearningJava - Procesando peticion HTTP de tipo GET");
+				List<BankAccountDTO> accounts = bankAccountBO.getAccounts();
+				JSONArray json = new JSONArray(accounts);
+				responseText = json.toString();
+				exchange.getResponseHeaders().add("Content-type", "application/json");
+				exchange.sendResponseHeaders(200, responseText.getBytes().length);
+			} else {
+				/** 405 Method Not Allowed */
+				exchange.sendResponseHeaders(405, -1);
+			}
+			OutputStream output = exchange.getResponseBody();
+			Instant finalDeEjecucion = Instant.now();
+			/**
+			 * Always remember to close the resources you open.
+			 * Avoid memory leaks
+			 */
+			LOGGER.info("LearningJava - Cerrando recursos ...");
+			String total = new String(String.valueOf(Duration.between(inicioDeEjecucion, finalDeEjecucion).toMillis()).concat(" segundos."));
+			LOGGER.info("Tiempo de respuesta: ".concat(total));
+			output.write(responseText.getBytes());
+			output.flush();
+			output.close();
+			exchange.close();
+		}));
 		
 	server.createContext("/api/getAccountsGroupByType", (exchange -> {
        String msgProcPeticion="LearningJava - Procesando peticion HTTP de tipo GET";
