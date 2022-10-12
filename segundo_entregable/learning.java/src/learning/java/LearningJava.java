@@ -51,7 +51,25 @@ public class LearningJava extends Thread {
 	
 
 	public static void main(String[] args) throws IOException {
+	    
 		
+		
+		
+		HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+
+	        ProcesaTipoServicio procesaTipoServicio = new ProcesaTipoServicio();
+	        ServiceProcessing serviceProcessing = procesaTipoServicio.procesaTipoServicio(server, path1);
+	        serviceProcessing.procesaService(server, path1);
+
+	        ServiceProcessing serviceProcessing2 = procesaTipoServicio.procesaTipoServicio(server, path2);
+	        serviceProcessing2.procesaService(server, path2);
+
+	        ServiceProcessing serviceProcessing3 = procesaTipoServicio.procesaTipoServicio(server, path3);
+	        serviceProcessing3.procesaService(server, path3);
+
+	        ServiceProcessing serviceProcessing4 = procesaTipoServicio.procesaTipoServicio(server, path4);
+	        serviceProcessing4.procesaService(server, path4);
+
 		
 		Logger logger=Logger.getInstance();
 		logger.log("patron de diseño singleton");
@@ -247,7 +265,7 @@ if ("GET".equals(exchange.getRequestMethod())) {
             Function<BankAccountDTO, String> groupFunction = (account) -> account.getAccountType().toString();
           //segundo colector
             groupedAccounts = accounts.stream().collect(Collectors.groupingBy(groupFunction));
-
+            groupedAccounts = accounts.stream().collect(Collectors.filterBy(groupFunction));
             JSONObject json = new JSONObject(groupedAccounts);
             responseText = json.toString();
             exchange.getResponseHeaders().add("Content-type", "application/json");
